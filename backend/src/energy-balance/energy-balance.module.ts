@@ -8,15 +8,25 @@ import {
 import { EnergyBalanceService } from './services/energy-balance.service';
 import { ReeClientService } from './services/ree-client.service';
 import { EnergyBalanceResolver } from './resolvers/energy-balance.resolver';
+import { FronteraService } from './services/frontera.service';
+import { Frontera, FronteraSchema } from './schemas/frontier-schema';
+import { FronteraResolver } from './resolvers/frontera.resolver';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: EnergyBalance.name, schema: EnergyBalanceSchema },
+      { name: Frontera.name, schema: FronteraSchema },
     ]),
     HttpModule,
   ],
-  providers: [EnergyBalanceService, ReeClientService, EnergyBalanceResolver],
-  exports: [EnergyBalanceService, ReeClientService],
+  providers: [
+    EnergyBalanceService,
+    ReeClientService,
+    FronteraService,
+    EnergyBalanceResolver,
+    FronteraResolver,
+  ],
+  exports: [EnergyBalanceService, ReeClientService, FronteraService],
 })
 export class EnergyBalanceModule {}

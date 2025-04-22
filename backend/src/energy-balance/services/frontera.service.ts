@@ -1,27 +1,27 @@
+import { FilterQuery, Model } from 'mongoose';
+import { Frontera } from '../schemas/frontier-schema';
+import { ReeClientService } from './ree-client.service';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
-import { EnergyBalance } from '../schemas/energy-balance.schema';
-import { ReeClientService } from './ree-client.service';
 
 @Injectable()
-export class EnergyBalanceService {
+export class FronteraService {
   private readonly logger = new Logger(ReeClientService.name);
   constructor(
-    @InjectModel(EnergyBalance.name)
-    private readonly balanceModel: Model<EnergyBalance>,
+    @InjectModel(Frontera.name)
+    private readonly fronteraModel: Model<Frontera>,
     private readonly reeClient: ReeClientService,
   ) {}
 
   private async fetchMissingData({ start, end }: { start: Date; end: Date }) {
     try {
-      const exists = await this.balanceModel.exists({
-        startDate: start,
-        endDate: end,
+      const exists = await this.fronteraModel.exists({
+        startDate: { $gte: start },
+        endDate: { $lte: end },
       });
 
       if (exists) {
@@ -31,33 +31,33 @@ export class EnergyBalanceService {
         return;
       }
 
-      const rawData = await this.reeClient.fetchData({ start, end });
+      const rawData = await this.reeClient.fetchFronteras({ start, end });
       this.logger.log(
-        `（*＾-＾*） Fetched data from REE balance: ${rawData.length}`,
+        `（*＾-＾*） Fetched data from REE fronteras: ${rawData?.length}`,
       );
       if (!rawData?.length) {
         throw new Error('API returned empty dataset');
       }
 
-      await this.balanceModel.insertMany(rawData);
-      this.logger.log(`(^_-)db(-_^) Saved data: ${rawData.length}`);
+      const transformedData = rawData.map((item: any) => ({
+        ...item,
+        country: item.groupId.split(' ')[0],
+        startDate: start,
+        endDate: end,
+      }));
+
+      await this.fronteraModel.insertMany(transformedData);
+      this.logger.log(`(^_-)db(-_^) Saved data: ${transformedData.length}`);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
   }
-
-  async getBalances({
+  async getIntercambiosFrontera({
     startDate,
     endDate,
-    groupId,
-    type,
-    groupType,
   }: {
     startDate: string;
     endDate: string;
-    groupId?: string;
-    type?: string;
-    groupType?: string;
   }) {
     this.logger.log(
       `[1] Received params: \n startData:${startDate} endDate:${endDate}`,
@@ -72,20 +72,14 @@ export class EnergyBalanceService {
 
     await this.fetchMissingData({ start, end });
 
-    const query: FilterQuery<EnergyBalance> = {
+    const query: FilterQuery<Frontera> = {
       startDate: { $gte: start },
       endDate: { $lte: end },
-      ...(groupId && { groupId }),
-      ...(type && { type }),
     };
 
     this.logger.log(`[3] Query MongoDB: ${JSON.stringify(query)}`);
 
-    if (groupId) query.groupId = groupId;
-    if (type) query.type = type;
-    if (groupType) query.groupType = groupType;
-
-    const data = await this.balanceModel.find(query).exec();
+    const data = await this.fronteraModel.find(query).exec();
     this.logger.log(`[4] Data obtained from MongoDB: ${data.length}`);
 
     return data;

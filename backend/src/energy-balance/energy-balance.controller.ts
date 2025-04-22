@@ -41,4 +41,17 @@ export class DebugController {
     const end = new Date('2025-04-20');
     return this.reeClient.fetchData({ start, end });
   }
+
+  @Post('frontera')
+  async getFronteraData(@Body() body: { start?: Date; end?: Date }) {
+    const { start, end } = body;
+    return this.reeClient.fetchFronteras({ start, end });
+  }
+
+  @Get('test-ree-frontera')
+  async testREEFronteras() {
+    const start = new Date('2025-04-19');
+    const end = new Date('2025-04-19');
+    return await this.reeClient.fetchFronteras({ start, end });
+  }
 }
