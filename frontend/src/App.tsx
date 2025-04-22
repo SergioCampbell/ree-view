@@ -16,7 +16,7 @@ export default function App() {
   };
 
   return (
-    <div className="global">
+    <>
       <div className="dashboard container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6 text-white">Energy monitoring REE</h1>
 
@@ -26,7 +26,7 @@ export default function App() {
           onTypeChange={(type) => handleFilterChange({ type })}
         />
 
-        <div className="mt-8">
+        <div className="mt-8 p-4 rounded-lg">
           <EnergyChart
             startDate={filters.startDate}
             endDate={filters.endDate}
@@ -35,6 +35,6 @@ export default function App() {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 }

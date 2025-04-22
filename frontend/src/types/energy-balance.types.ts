@@ -1,23 +1,3 @@
-export interface EnergyBalanceAttributes {
-  title: string;
-  description?: string;
-  color?: string;
-  icon?: string | null;
-  lastUpdate?: string;
-  total?: number;
-  totalPercentage?: number;
-}
-
-export interface EnergyBalanceType {
-  startDate: Date;
-  endDate: Date;
-  type: string;
-  groupId?: string | null;
-  value: number;
-  percentage: number;
-  attributes: EnergyBalanceAttributes;
-}
-
 export interface QueryResult {
   energyBalances: EnergyBalanceType[];
 }
@@ -43,3 +23,34 @@ export interface EnergyBalanceVars {
     groupId?: string | null;
   };
 }
+
+type ValueEntry = {
+  value?: number | null;
+  percentage?: number | null;
+  datetime?: string | null;
+};
+
+type EnergyBalanceAttributes = {
+  title: string;
+  description?: string | null;
+  color?: string | null;
+  icon?: string | null;
+  type?: string | null;
+  magnitude?: string | null;
+  composite?: string | null;
+  lastUpdate?: string | null;
+  values?: ValueEntry[] | null;
+  total?: number | null;
+  totalPercentage?: number | null;
+};
+
+export type EnergyBalanceType = {
+  startDate: Date;
+  endDate: Date;
+  id: string;
+  type: string;
+  groupId: string;
+  attributes: EnergyBalanceAttributes;
+  createdAt: Date;
+  updatedAt: Date;
+};

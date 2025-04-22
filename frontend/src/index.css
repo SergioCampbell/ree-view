@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
-.global {
-  @apply bg-slate-700 font-sans h-screen flex flex-col items-center justify-center;
+:root {
+  --tw-bg-opacity: 1;
+  --tw-text-opacity: 1;
+  background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
+}
+
+.dashboard {
+  @apply bg-slate-800 p-6;
 }
 
 .data-selector {

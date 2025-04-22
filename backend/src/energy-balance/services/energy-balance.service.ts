@@ -20,18 +20,25 @@ export class EnergyBalanceService {
   private async fetchMissingData({ start, end }: { start: Date; end: Date }) {
     try {
       const exists = await this.balanceModel.exists({
-        datetime: { $gte: start, $lte: end },
+        startDate: start,
+        endDate: end,
       });
-      if (exists) return;
+
+      if (exists) {
+        this.logger.log(
+          `ㄟ( ▔, ▔ )ㄏ Data already exists for range: ${start} - ${end}`,
+        );
+        return;
+      }
 
       const rawData = await this.reeClient.fetchData({ start, end });
-      this.logger.log(`Datos obtenidos de la API: ${rawData.length}`);
+      this.logger.log(`（*＾-＾*） Fetched data from REE: ${rawData.length}`);
       if (!rawData?.length) {
         throw new Error('API returned empty dataset');
       }
 
       await this.balanceModel.insertMany(rawData);
-      this.logger.log(`Datos guardados: ${rawData.length}`);
+      this.logger.log(`(^_-)db(-_^) Saved data: ${rawData.length}`);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -51,14 +58,14 @@ export class EnergyBalanceService {
     groupType?: string;
   }) {
     this.logger.log(
-      `[1] Parámetros recibidos: \n startData:${startDate} endDate:${endDate}`,
+      `[1] Received params: \n startData:${startDate} endDate:${endDate}`,
     );
 
     const start = new Date(`${startDate}T00:00:00Z`);
     const end = new Date(`${endDate}T23:59:59Z`);
 
     this.logger.log(
-      `[2] Fechas convertidas: \n startData:${start} endDate:${end}`,
+      `[2] Converted to Date: \n startData:${start} endDate:${end}`,
     );
 
     await this.fetchMissingData({ start, end });
@@ -77,7 +84,7 @@ export class EnergyBalanceService {
     if (groupType) query.groupType = groupType;
 
     const data = await this.balanceModel.find(query).exec();
-    this.logger.log(`[4] Datos obtenidos de MongoDB: ${data.length}`);
+    this.logger.log(`[4] Data obtained from MongoDB: ${data.length}`);
 
     return data;
   }
