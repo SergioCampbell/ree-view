@@ -11,14 +11,23 @@ export class EnergyBalanceResolver {
   @Query(() => [EnergyBalanceType])
   async getEnergyBalances(@Args('input') input: EnergyBalanceInput) {
     if (new Date(input.startDate) > new Date(input.endDate)) {
-      throw new BadRequestException(
-        'La fecha de inicio debe ser anterior a la fecha final',
-      );
+      throw new BadRequestException('⚠️ Start date must be before end date.');
     }
-    return this.balanceService.getBalances({
+    const data = await this.balanceService.getBalances({
       startDate: input.startDate,
       endDate: input.endDate,
       groupId: input.groupId,
+      type: input.type,
+      groupType: input.groupType,
     });
+    if (!data) {
+      throw new BadRequestException(
+        '⚠️ No data found for the given date range.',
+      );
+    }
+
+    console.log('Data fetched from the database:', data.length);
+
+    return data;
   }
 }

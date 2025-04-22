@@ -3,14 +3,38 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class EnergyBalance extends Document {
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true, index: true })
+  startDate: Date;
+
+  @Prop({ type: Date, required: true, index: true })
+  endDate: Date;
+
+  @Prop()
   type: string;
 
-  @Prop({ required: true })
+  @Prop()
   groupId: string;
 
   @Prop({ type: Object })
-  attributes: Record<string, any>;
+  attributes: {
+    title: string;
+    description: string;
+    color: string;
+    icon: null | string;
+    type: string;
+    magnitude: null | string;
+    composite: boolean;
+    lastUpdate: Date;
+    values: Array<{
+      value: number;
+      percentage: number;
+      datetime: string;
+    }>;
+    total: number;
+    totalPercentage: number;
+    groupId: string;
+    groupType: string;
+  };
 
   @Prop({ type: [{ value: Number, percentage: Number, datetime: Date }] })
   values: { value: number; percentage: number; datetime: Date }[];

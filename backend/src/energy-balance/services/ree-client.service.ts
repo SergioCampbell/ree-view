@@ -21,7 +21,7 @@ export class ReeClientService {
         start_date: this.formatDate(start, true),
         end_date: this.formatDate(end, false),
         time_trunc: 'day',
-        cached: 'false',
+        cached: 'true',
       };
 
       this.logger.debug(
@@ -46,6 +46,8 @@ export class ReeClientService {
         }
 
         return group.attributes.content.map((valueEntry: any) => ({
+          startDate: start,
+          endDate: end,
           id: valueEntry.id,
           type: valueEntry.type,
           groupId: valueEntry.groupId,
