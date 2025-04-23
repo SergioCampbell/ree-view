@@ -3,19 +3,19 @@
 :root {
   --tw-bg-opacity: 1;
   --tw-text-opacity: 1;
-  background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
+  background-color: #291d3d;
 }
 
 .dashboard {
-  @apply bg-slate-800 p-6;
+  @apply p-6 h-screen flex flex-col items-center;
 }
 
 .data-selector {
-  @apply bg-slate-100 p-6 rounded-lg shadow-md;
+  @apply bg-slate-300 p-6 rounded-lg shadow-md;
 }
 
 .energy-chart {
-  @apply bg-slate-100 p-4 rounded-lg shadow-md;
+  @apply bg-slate-300 p-4 rounded-lg shadow-md;
 }
 
 .loading-spinner {

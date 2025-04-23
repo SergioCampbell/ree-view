@@ -16,8 +16,7 @@ export default function App() {
   };
 
   return (
-    <>
-      <div className="dashboard container mx-auto p-4">
+      <div className="dashboard">
         <h1 className="text-2xl font-bold mb-6 text-white">Energy monitoring REE</h1>
 
         <DataSelector
@@ -35,6 +34,5 @@ export default function App() {
           />
         </div>
       </div>
-    </>
   );
 }
