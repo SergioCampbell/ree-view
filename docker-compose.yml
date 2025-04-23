@@ -1,0 +1,42 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - '3000:3000'
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      REE_API_URL: https://apidatos.ree.es/es/datos/balance/balance-electrico
+      REE_FRONTERAS_API_URL: https://apidatos.ree.es/es/datos/balance/todas-fronteras-fisicos-programados
+      REE_API_URL_ERROR=https: //apidatos.ree.es/invalid-endpoint
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - '80:80'
+    environment:
+    - VITE_API_URL=http://backend:3000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:6.0
+    environment:
+      MONGO_INITDB_DATABASE: energy-balance
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:
+    driver: bridge
