@@ -1,4 +1,4 @@
-# Balance Eléctrico Nacional - [Nombre de tu Proyecto/Aplicación]
+# Balance Eléctrico Nacional - Energy monitoring REE
 
 ![alt text](image.png)
 
@@ -11,8 +11,6 @@ Este proyecto es una aplicación fullstack que consume datos de la API de REE (R
 La arquitectura del proyecto se divide en dos partes principales:
 
 ```
-└── .git/ (Información del control de versiones Git)
-└── .qodo/ (Historial de la extensión Qodo)
 └── backend/ (Código fuente y configuración del backend NestJS)
 ├── .env (Variables de entorno del backend)
 ├── docker-compose.yml (Configuración de Docker para el backend)
@@ -60,7 +58,7 @@ La arquitectura del proyecto se divide en dos partes principales:
 * **Vite:** Herramienta de construcción rápida para aplicaciones web modernas.
 * **Apollo Client:** Librería para la gestión de datos con GraphQL.
 * **TypeScript:** Superset de JavaScript que añade tipado estático.
-* **CSS Modules/Tailwind CSS:** Para la gestión de estilos (necesitarías especificar cuál se está usando).
+* **Tailwind CSS:** Para la gestión de estilos.
 * **react-datepicker:** Componente para la selección de fechas.
 
 ### Backend
@@ -74,8 +72,8 @@ La arquitectura del proyecto se divide en dos partes principales:
 
 Antes de ejecutar la aplicación, asegúrate de tener instalado lo siguiente:
 
-* **Node.js:** (Especifica la versión recomendada)
-* **npm** o **pnpm:** (El gestor de paquetes utilizado en el proyecto)
+* **Node.js:** v20.10.0
+* **npm** o **pnpm:** 10.5.2 o superior
 * **Docker** y **Docker Compose:** (Si planeas utilizar la contenerización)
 
 ## Instalación
@@ -85,8 +83,8 @@ Sigue estos pasos para configurar el entorno de desarrollo:
 1. **Clonar el repositorio:**
 
     ```bash
-    git clone [https://github.com/cran/DELTD](https://github.com/cran/DELTD)
-    cd [nombre del repositorio]
+    git clone [https://github.com/SergioCampbell/ree-view](https://github.com/SergioCampbell/ree-view)
+    cd ree-view
     ```
 
 2. **Instalar las dependencias del backend:**
@@ -116,11 +114,11 @@ Sigue estos pasos para configurar el entorno de desarrollo:
 
     ```bash
     cd backend
-    pnpm run start:dev # o npm run start:dev
+    pnpm run dev # o npm run dev
     cd ..
     ```
 
-    El backend se ejecutará en el puerto (especificar el puerto por defecto, p. ej., `http://localhost:3001/graphql`).
+    El backend se ejecutará en el puerto 3000  `http://localhost:3000/graphql`.
 
 2. **Ejecutar el frontend:**
 
@@ -130,7 +128,7 @@ Sigue estos pasos para configurar el entorno de desarrollo:
     cd ..
     ```
 
-    El frontend se ejecutará en el puerto (especificar el puerto por defecto, p. ej., `http://localhost:5173`).
+    El frontend se ejecutará en el puerto `http://localhost:5173`.
 
     Abre tu navegador en la URL del frontend para ver la aplicación.
 
@@ -144,7 +142,10 @@ El proyecto se puede ejecutar utilizando Docker Compose. Asegúrate de tener Doc
     docker-compose up -d
     ```
 
-    Esto construirá y levantará los contenedores definidos en el archivo `docker-compose.yml` de la raíz del proyecto. El frontend estará disponible en el puerto configurado (por defecto `http://localhost:3000` según tu README anterior, verifica tu `docker-compose.yml`).
+    Esto construirá y levantará los contenedores definidos en el archivo `docker-compose.yml` de la raíz del proyecto. El frontend estará disponible en el puerto configurado y solo sería clickear el el puerto desde docker desktop:
+
+    *
+    ![alt text](image-1.png)
 
 ## Uso
 
@@ -172,3 +173,72 @@ El backend expone los datos de la API de REE a través de un API GraphQL. Las pr
 
 * `GET_ENERGY_DATA`: Obtiene los datos del balance energético, permitiendo filtrar por rango de fechas, grupo y tipo de energía.
 * `GET_FRONTERAS`: Obtiene los datos de los intercambios internacionales de energía dentro de un rango de fechas específico.
+
+### Consulta `GetEnergyData`
+
+Esta consulta GraphQL permite obtener datos de balance energético filtrados por un conjunto de criterios especificados en el argumento `$input`.
+
+```graphql
+query GetEnergyData($input: EnergyBalanceInput!) {
+  getEnergyBalances(input: $input) {
+    startDate
+    endDate
+    id
+    type
+    groupId
+    attributes {
+      title
+      description
+      color
+      icon
+      type
+      magnitude
+      composite
+      lastUpdate
+      values {
+        value
+        percentage
+        datetime
+      }
+      total
+      totalPercentage
+    }
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### Consulta `GetFronteraByDate`
+
+Esta consulta GraphQL permite obtener datos de los intercambios de energía en las fronteras, filtrados por criterios especificados en el argumento `$input`.
+
+Y se ejecuta luego de la llamada de GetEnergyBalance.
+
+```graphql
+query GetFronteraByDate($input: FronteraInput!) {
+  getIntercambios(input: $input) {
+    type
+    id
+    groupId
+    attributes {
+      title
+      description
+      color
+      icon
+      type
+      magnitude
+      composite
+      lastUpdate
+      values {
+        value
+        percentage
+        datetime
+      }
+      total
+      totalPercentage
+    }
+    country
+  }
+}
+```
