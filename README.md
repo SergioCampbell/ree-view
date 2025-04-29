@@ -74,7 +74,7 @@ Antes de ejecutar la aplicación, asegúrate de tener instalado lo siguiente:
 
 * **Node.js:** v20.10.0
 * **npm** o **pnpm:** 10.5.2 o superior
-* **Docker** y **Docker Compose:** (Si planeas utilizar la contenerización)
+* **Docker** y **Docker Compose:** 28.0.4
 
 ## Instalación
 
